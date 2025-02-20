@@ -87,10 +87,10 @@ public class Spawner implements CommandExecutor {
         if (entityConfig.contains("damage")) {
             setDoubleAttribute(entity, entityConfig.getDouble("damage"), commandSender, entityConfig, Attribute.GENERIC_ATTACK_DAMAGE);
         }
-        if (entityConfig.contains("damage")) {
+        if (entityConfig.contains("movement_speed")) {
             setDoubleAttribute(entity, entityConfig.getDouble("movement_speed"), commandSender, entityConfig, Attribute.GENERIC_MOVEMENT_SPEED);
         }
-        if (entityConfig.contains("damage")) {
+        if (entityConfig.contains("knockback_resistance")) {
             setDoubleAttribute(entity, entityConfig.getDouble("knockback_resistance"), commandSender, entityConfig, Attribute.GENERIC_KNOCKBACK_RESISTANCE);
         }
 
@@ -153,7 +153,10 @@ public class Spawner implements CommandExecutor {
     public void setDoubleAttribute(LivingEntity entity, double health, Player player, ConfigurationSection entityConfig,  Attribute attribute) {
         try {
             entity.getAttribute(attribute).setBaseValue(health);
-            entity.setHealth(health);
+            if (attribute == Attribute.GENERIC_MAX_HEALTH) {
+                entity.setHealth(health);
+            }
+
 
         }
         catch(IllegalArgumentException e) {
