@@ -1,0 +1,11 @@
+name: CustomSpawning
+version: '1.0-SNAPSHOT'
+main: org.milk4lyfe.customSpawning.CustomSpawning
+api-version: '1.21'
+commands:
+  spawn:
+    description: spawns stuff
+    permission: CSpawn.spawn
+  CSpawn.reloadConfig:
+    description: reloads da config
+    permission: CSpawn.reload
