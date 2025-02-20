@@ -1,0 +1,22 @@
+entities:
+  #PUT MOBS HERE---------------------------
+  example:
+    mob_type: HUSK
+    name: '&c&lExample Mob'
+    equipment:
+      helmet: LEATHER_HELMET
+      chestplate: DIAMOND_CHESTPLATE
+      leggings: IRON_LEGGINGS
+      boots: IRON_BOOTS
+      main_hand: IRON_SWORD
+      off_hand: SHIELD
+    health: 10
+    movement_speed: 0.5
+    knockback_resistance: 5
+    damage: 10 # the damage the mob outputs
+group:
+  testGroup:
+    members: #put them in the order you want them to be especially in square formations
+      test: 20
+      test1: 10
+    leader: test

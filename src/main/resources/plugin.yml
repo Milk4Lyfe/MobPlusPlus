@@ -9,3 +9,6 @@ commands:
   mobPlusPlusconfigReload:
     description: reloads da config
     permission: mobplusplus.reload
+  group:
+    description: spawns groups
+    permission: mobplusplus.spawn

@@ -1,6 +1,7 @@
 package org.milk4lyfe.customSpawning.commands;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
@@ -15,7 +16,11 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.milk4lyfe.customSpawning.mobplusplus;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 public class Spawner implements CommandExecutor {
 
     public mobplusplus plugin;
@@ -26,7 +31,7 @@ public class Spawner implements CommandExecutor {
     }
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
-        if (args.length ==0 || args.length > 2) {
+        if (args.length ==0 || args.length > 3) {
             commandSender.sendMessage("Incorrect usage. Use /spawn <entity> [quantity]");
             return true;
         }
@@ -49,11 +54,22 @@ public class Spawner implements CommandExecutor {
 
         Player player = (Player) commandSender;
         World world = player.getWorld();
+
         if (plugin.getConfig().getConfigurationSection("entities").contains(args[0])) {
-            commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&6Mob++&8] &r&aSpawned entities!"));
-            for (int i=0; i< times; i++) {
-                spawn(player, world, args[0]);
+
+
+            if (times>1) {
+                for (int i=0; i< times; i++) {
+                    spawn(player, world, args[0], plugin, player.getLocation());
+
+                }
+                commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&6Mob++&8] &r&aSpawned entities!"));
             }
+            else {
+                spawn(player, world, args[0], plugin, player.getLocation());
+                commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&6Mob++&8] &r&aSpawned an entity!"));
+            }
+
 
         }
         else {
@@ -64,17 +80,17 @@ public class Spawner implements CommandExecutor {
 
         return true;
     }
-    public void spawn(Player commandSender, World world, String args0) {
+    public static LivingEntity spawn(Player commandSender, World world, String args0, mobplusplus plugin, Location loc) {
         EntityType type;
         try {
             type = EntityType.valueOf(mobplusplus.getConfigStringValue(plugin, "entities." + args0 + ".mob_type").toUpperCase());
         }
         catch (IllegalArgumentException e) {
             commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&6Mob++&8] &cError: Mob_type is invalid!"));
-            return;
+            return null;
         }
 
-        LivingEntity entity = (LivingEntity) world.spawnEntity(commandSender.getLocation(), type);
+        LivingEntity entity = (LivingEntity) world.spawnEntity(loc, type);
 
         ConfigurationSection entityConfig = plugin.getConfig().getConfigurationSection("entities." + args0);
         entity.setCustomName(ChatColor.translateAlternateColorCodes('&', mobplusplus.getConfigStringValue(plugin, "entities." + args0 + ".name")));
@@ -93,12 +109,13 @@ public class Spawner implements CommandExecutor {
         if (entityConfig.contains("knockback_resistance")) {
             setDoubleAttribute(entity, entityConfig.getDouble("knockback_resistance"), commandSender, entityConfig, Attribute.GENERIC_KNOCKBACK_RESISTANCE);
         }
+        return entity;
 
 
 
 
     }
-    private void equipEntity(LivingEntity entity, ConfigurationSection equipment, Player player) {
+    private static void equipEntity(LivingEntity entity, ConfigurationSection equipment, Player player) {
         if (equipment == null) return;
         EntityEquipment entityEquipment = entity.getEquipment();
         try{
@@ -150,7 +167,7 @@ public class Spawner implements CommandExecutor {
             player.sendMessage("[Mob++] Error: Offhand type is invalid!");
         }
     }
-    public void setDoubleAttribute(LivingEntity entity, double health, Player player, ConfigurationSection entityConfig,  Attribute attribute) {
+    public static void setDoubleAttribute(LivingEntity entity, double health, Player player, ConfigurationSection entityConfig, Attribute attribute) {
         try {
             entity.getAttribute(attribute).setBaseValue(health);
             if (attribute == Attribute.GENERIC_MAX_HEALTH) {

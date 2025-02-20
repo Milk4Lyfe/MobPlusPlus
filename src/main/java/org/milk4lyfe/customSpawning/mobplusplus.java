@@ -3,9 +3,7 @@ package org.milk4lyfe.customSpawning;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.milk4lyfe.customSpawning.commands.Spawner;
-import org.milk4lyfe.customSpawning.commands.SpawnerTabCompleter;
-import org.milk4lyfe.customSpawning.commands.reloadConfig;
+import org.milk4lyfe.customSpawning.commands.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +19,8 @@ public final class mobplusplus extends JavaPlugin {
         getCommand("spawn").setExecutor(new Spawner(this));
         getCommand("spawn").setTabCompleter(new SpawnerTabCompleter(this));
         getCommand("mobPlusPlusconfigReload").setExecutor(new reloadConfig(this));
+        getCommand("group").setExecutor(new groupCommand(this));
+        getCommand("group").setTabCompleter(new groupCommandTabCompleter(this));
     }
 
     @Override
