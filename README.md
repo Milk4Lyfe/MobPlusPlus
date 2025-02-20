@@ -3,7 +3,7 @@ TODO:
 - [ ] Optimize Optimize OPTIMIZE (this will never be complete)
 - [ ] Make it so exception messages only show to players in a debug mode
 - [X] More custom attributes
-- [ ] Grouping
+- [X] Grouping
 - [ ] Formationing
 
 
