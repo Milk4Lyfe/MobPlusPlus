@@ -1,5 +1,5 @@
 <component name="ArtifactManager">
-  <artifact type="jar" name="customspawning:jar">
+  <artifact type="jar" name="mobplusplus:jar">
     <output-path>D:/Downloads/Minecraft Server 1.21 Lololol/plugins</output-path>
     <root id="archive" name="customspawning.jar">
       <element id="module-output" name="customspawning" />

@@ -10,17 +10,17 @@ import org.milk4lyfe.customSpawning.commands.reloadConfig;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class CustomSpawning extends JavaPlugin {
+public final class mobplusplus extends JavaPlugin {
 
     @Override
     public void onEnable() {
         // Plugin startup logic
-        Bukkit.getLogger().info("CustomSpawner activated!");
+        Bukkit.getLogger().info("Mob++ activated!");
         saveDefaultConfig();
 
         getCommand("spawn").setExecutor(new Spawner(this));
         getCommand("spawn").setTabCompleter(new SpawnerTabCompleter(this));
-        getCommand("CSpawn.reloadConfig").setExecutor(new reloadConfig(this));
+        getCommand("mobPlusPlusconfigReload").setExecutor(new reloadConfig(this));
     }
 
     @Override
@@ -28,8 +28,8 @@ public final class CustomSpawning extends JavaPlugin {
         // Plugin shutdown logic
         saveConfig();
     }
-    public static List<String> getListFromConfiguration(JavaPlugin plugin) {
-        ConfigurationSection entitySection = plugin.getConfig().getConfigurationSection("entities");
+    public static List<String> getListFromConfiguration(JavaPlugin plugin, String path) {
+        ConfigurationSection entitySection = plugin.getConfig().getConfigurationSection(path);
         List<String> entityList = new ArrayList<>();
         if (entitySection != null) {
             entityList.addAll(entitySection.getKeys(false));
