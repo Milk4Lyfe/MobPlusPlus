@@ -1,11 +1,10 @@
 TODO:
 - [X] Make an exception for when equipment is invalid
 - [ ] Optimize Optimize OPTIMIZE (this will never be complete)
-- [ ] Make it so exception messages only show to players in a debug mode
 - [X] More custom attributes
 - [X] Grouping
 - [ ] Leader Stuff
-- [ ] Formationing
+- [X] Formationing
 
 
       
