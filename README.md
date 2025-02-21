@@ -4,6 +4,7 @@ TODO:
 - [ ] Make it so exception messages only show to players in a debug mode
 - [X] More custom attributes
 - [X] Grouping
+- [ ] Leader Stuff
 - [ ] Formationing
 
 
