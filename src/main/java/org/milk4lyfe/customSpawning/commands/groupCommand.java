@@ -27,35 +27,88 @@ public class groupCommand implements CommandExecutor {
         Player player = (Player) commandSender;
         World world = player.getWorld();
 
-        ConfigurationSection groupConfig = plugin.getConfig().getConfigurationSection("group." + args[0] + ".members");
+        ConfigurationSection bettergroupConfig = plugin.getConfig().getConfigurationSection("group." + args[0]);
         List<String> entityList = mobplusplus.getListFromConfiguration(plugin, "group." + args[0] + ".members");
+
+        int direction = getPlayerDirection(player);
+        LivingEntity leader = Spawner.spawn(player, world, bettergroupConfig.getString("leader"), plugin, player.getLocation());
+        spawnGroup(player, entityList, args[0], direction);
+        commandSender.sendMessage(String.valueOf(direction));
+
+        return true;
+    }
+    public int getTotalEntitiesInGroup(List<String>entityList, String groupName) {
+
         int sum=0;
-        for (int i = 0; i< entityList.size(); i++) {
-            sum=sum+groupConfig.getInt(entityList.get(i));
+        for (String string : entityList) {
+            sum = sum + plugin.getConfig().getConfigurationSection("group." + groupName+ ".members").getInt(string);
         }
-        int gridSize = (int) Math.ceil(Math.sqrt(sum));
+        return sum;
+    }
+    public int getPlayerDirection(Player player) {
+        float yaw = player.getLocation().getYaw();
+        int direction = 0;
+        if (yaw >= -45 && yaw < 45) {
+            // Facing South
+            direction = 0;
+        } else if (yaw >= 45 && yaw < 135) {
+            // Facing West
+            direction = 1;
+        } else if (yaw >= 135 || yaw < -135) {
+            direction = 2;
+            // Facing North
+        } else if (yaw >= -135 && yaw < -45) {
+            direction = 3;
+            // Facing East
+        }
+        return direction;
+    }
+    public HashMap<LivingEntity, Integer> spawnGroup(Player player, List<String>entityList, String groupName, int direction) {
+        HashMap<LivingEntity, Integer> group = new HashMap<LivingEntity, Integer>();
+        ConfigurationSection groupConfig = plugin.getConfig().getConfigurationSection("group." + groupName + ".members");
+        World world = player.getWorld();
+        int gridSize = (int) Math.ceil(Math.sqrt(getTotalEntitiesInGroup(entityList, groupName)));
         int xOffset = 0, zOffset = 0;
         int tag = 0;
-        for (int i = 0; i< entityList.size(); i++) {
-
-            for (int j =0; j< groupConfig.getInt(entityList.get(i)); j++) {
-                LivingEntity entity = Spawner.spawn(player, world, entityList.get(i), plugin, player.getLocation());
+        for (String string : entityList) {
+            for (int j = 0; j < groupConfig.getInt(string); j++) {
+                LivingEntity entity = Spawner.spawn(player, world, string, plugin, player.getLocation());
+                Location loc = entity.getLocation();
                 group.put(entity, tag);
-                Location loc = entity.getLocation().add(xOffset, 0, zOffset);
+                switch(direction) {
+                    case 0: //South
+                        loc.add(xOffset  , 0, zOffset-2);
+                        break;
+                    case 1://West
+                        loc.add((zOffset-2)*-1 , 0, xOffset);
+                        break;
+                    case 2://North
+                        loc.add(xOffset*-1 , 0, zOffset+2);
+                        break;
+                    case 3: //East
+                        loc.add(zOffset-2 , 0, xOffset);
+                        break;
+                }
                 entity.teleport(loc);
                 entity.setAI(false);
                 tag++;
-                xOffset++;
-                if (xOffset >= gridSize) {
-                    xOffset=0;
-                    zOffset++;
+                if (direction ==1 || direction == 2) {
+                    xOffset++;
+                }
+                else {
+                    xOffset--;
+                }
+                if (Math.abs(xOffset) >= gridSize){
+                    xOffset = 0;
+                    if (direction ==2) {
+                        zOffset++;
+                    }
+                    else {
+                        zOffset--;
+                    }
                 }
             }
-
-
         }
-        commandSender.sendMessage(group.toString());
-
-        return true;
+        return group;
     }
 }

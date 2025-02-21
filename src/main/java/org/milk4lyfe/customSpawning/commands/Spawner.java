@@ -98,16 +98,16 @@ public class Spawner implements CommandExecutor {
 
         equipEntity(entity, equipmentConfig, commandSender);
         if (entityConfig.contains("health")) {
-            setDoubleAttribute(entity, entityConfig.getDouble("health"), commandSender, entityConfig, Attribute.GENERIC_MAX_HEALTH);
+            setDoubleAttribute(entity, entityConfig.getDouble("health"), commandSender, entityConfig, Attribute.MAX_HEALTH);
         }
         if (entityConfig.contains("damage")) {
-            setDoubleAttribute(entity, entityConfig.getDouble("damage"), commandSender, entityConfig, Attribute.GENERIC_ATTACK_DAMAGE);
+            setDoubleAttribute(entity, entityConfig.getDouble("damage"), commandSender, entityConfig, Attribute.ATTACK_DAMAGE);
         }
         if (entityConfig.contains("movement_speed")) {
-            setDoubleAttribute(entity, entityConfig.getDouble("movement_speed"), commandSender, entityConfig, Attribute.GENERIC_MOVEMENT_SPEED);
+            setDoubleAttribute(entity, entityConfig.getDouble("movement_speed"), commandSender, entityConfig, Attribute.MOVEMENT_SPEED);
         }
         if (entityConfig.contains("knockback_resistance")) {
-            setDoubleAttribute(entity, entityConfig.getDouble("knockback_resistance"), commandSender, entityConfig, Attribute.GENERIC_KNOCKBACK_RESISTANCE);
+            setDoubleAttribute(entity, entityConfig.getDouble("knockback_resistance"), commandSender, entityConfig, Attribute.KNOCKBACK_RESISTANCE);
         }
         return entity;
 
@@ -170,7 +170,7 @@ public class Spawner implements CommandExecutor {
     public static void setDoubleAttribute(LivingEntity entity, double health, Player player, ConfigurationSection entityConfig, Attribute attribute) {
         try {
             entity.getAttribute(attribute).setBaseValue(health);
-            if (attribute == Attribute.GENERIC_MAX_HEALTH) {
+            if (attribute == Attribute.MAX_HEALTH) {
                 entity.setHealth(health);
             }
 

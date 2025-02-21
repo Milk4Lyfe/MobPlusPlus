@@ -1,7 +1,7 @@
 name: CustomSpawning
 version: '1.0-SNAPSHOT'
 main: org.milk4lyfe.customSpawning.mobplusplus
-api-version: '1.21'
+api-version: '1.21.4'
 commands:
   spawn:
     description: spawns stuff
