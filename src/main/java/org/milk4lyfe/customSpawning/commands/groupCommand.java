@@ -1,5 +1,6 @@
 package org.milk4lyfe.customSpawning.commands;
 
+import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -7,14 +8,15 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 import org.milk4lyfe.customSpawning.mobplusplus;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class groupCommand implements CommandExecutor {
@@ -28,7 +30,7 @@ public class groupCommand implements CommandExecutor {
             commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&6Mob++&8] &cError: Invalid Group!"));
             return true;
         }
-        HashMap<Integer, LivingEntity> group = new HashMap<Integer, LivingEntity>();
+        HashMap<LivingEntity, Integer> group = new HashMap<LivingEntity, Integer>();
         Player player = (Player) commandSender;
         World world = player.getWorld();
 
@@ -37,8 +39,40 @@ public class groupCommand implements CommandExecutor {
 
         int direction = getPlayerDirection(player);
         LivingEntity leader = Spawner.spawn(player, world, bettergroupConfig.getString("leader"), plugin, player.getLocation());
+        
         group = spawnGroup(player, entityList, args[0], direction);
         commandSender.sendMessage(String.valueOf(direction));
+
+        HashMap<LivingEntity, Integer> finalGroup = group;
+        commandSender.sendMessage(finalGroup.toString());
+        new BukkitRunnable() {
+
+            @Override
+            public void run() {
+
+                for (LivingEntity entry : finalGroup.keySet()) {
+                    Vector moveDirection = new Vector(0, 0, 0);
+
+                        moveDirection = switch (direction) {
+                            case 0 -> //South
+                                    new Vector(0, 0, 0.1);
+                            case 1 ->//West
+                                    new Vector(-0.1, 0, 0);
+                            case 2 ->//North
+                                    new Vector(0, 0, -0.1);
+                            case 3 -> //East
+                                    new Vector(0.1, 0, 0);
+                            default -> moveDirection;
+                        };
+
+
+                    leader.setVelocity(moveDirection);
+                    entry.setVelocity(moveDirection);
+                }
+
+
+            }
+        }.runTaskTimer(plugin, 0L, 1L); // Runs every tick (1L = 1 tick)
 
         return true;
     }
@@ -70,8 +104,8 @@ public class groupCommand implements CommandExecutor {
         return direction;
     }
 
-    protected HashMap<Integer, LivingEntity> spawnGroup(Player player, List<String>entityList, String groupName, int direction) {
-        HashMap<Integer, LivingEntity> group = new HashMap<Integer, LivingEntity>();
+    protected HashMap<LivingEntity, Integer> spawnGroup(Player player, List<String>entityList, String groupName, int direction) {
+        HashMap<LivingEntity, Integer> group = new HashMap<LivingEntity, Integer>();
         ConfigurationSection groupConfig = plugin.getConfig().getConfigurationSection("group." + groupName + ".members");
         World world = player.getWorld();
         int gridSize = (int) Math.ceil(Math.sqrt(getTotalEntitiesInGroup(entityList, groupName)));
@@ -83,7 +117,7 @@ public class groupCommand implements CommandExecutor {
                 LivingEntity entity = Spawner.spawn(player, world, string, plugin, player.getLocation());
 
                 Location loc = entity.getLocation();
-                group.put(tag, entity);
+                group.put(entity, tag);
                 placeEntity( direction, loc, xOffset, zOffset);
                 if (direction ==1 || direction == 2) {
                     xOffset++;
@@ -102,7 +136,7 @@ public class groupCommand implements CommandExecutor {
                 }
                 tag++;
                 entity.teleport(loc);
-                entity.setAI(false);
+
             }
         }
         return group;
@@ -117,7 +151,7 @@ public class groupCommand implements CommandExecutor {
                 loc.add(xOffset, 0, zOffset-2);
                 break;
             case 1://West
-                loc.add((zOffset-2)*-1 , 0, xOffset);
+                loc.add(zOffset+2 , 0, xOffset);
                 break;
             case 2://North
                 loc.add(xOffset*-1 , 0, zOffset+2);
