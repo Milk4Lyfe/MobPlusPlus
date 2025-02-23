@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.milk4lyfe.customSpawning.commands.*;
+import org.milk4lyfe.customSpawning.listeners.entityDeathEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,7 @@ public final class mobplusplus extends JavaPlugin {
         getCommand("mobPlusPlusconfigReload").setExecutor(new reloadConfig(this));
         getCommand("group").setExecutor(new groupCommand(this));
         getCommand("group").setTabCompleter(new groupCommandTabCompleter(this));
+        getServer().getPluginManager().registerEvents(new entityDeathEvent(this), this);
     }
 
     @Override

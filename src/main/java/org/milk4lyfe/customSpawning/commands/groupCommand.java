@@ -1,6 +1,5 @@
 package org.milk4lyfe.customSpawning.commands;
 
-import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -10,27 +9,35 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
+import org.milk4lyfe.customSpawning.GroupManager;
+import org.milk4lyfe.customSpawning.listeners.entityDeathEvent;
 import org.milk4lyfe.customSpawning.mobplusplus;
 
+import javax.swing.*;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.UUID;
 
 
 public class groupCommand implements CommandExecutor {
     public mobplusplus plugin;
+    public UUID groupId = UUID.randomUUID();
+    HashMap<UUID, LivingEntity> group = new HashMap<UUID, LivingEntity>();
     public groupCommand(mobplusplus plugin) {
         this.plugin = plugin;
+        this.groupId = UUID.randomUUID();
     }
     @Override
     public boolean onCommand(CommandSender commandSender, Command command,  String s,  String[] args) {
         if (!isGroup(args)) {
             commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&6Mob++&8] &cError: Invalid Group!"));
+
             return true;
         }
-        HashMap<LivingEntity, Integer> group = new HashMap<LivingEntity, Integer>();
+
         Player player = (Player) commandSender;
         World world = player.getWorld();
 
@@ -42,15 +49,15 @@ public class groupCommand implements CommandExecutor {
         
         group = spawnGroup(player, entityList, args[0], direction);
         commandSender.sendMessage(String.valueOf(direction));
-
-        HashMap<LivingEntity, Integer> finalGroup = group;
-        commandSender.sendMessage(finalGroup.toString());
+        GroupManager.assignGroup(groupId, group);
+        final HashMap<UUID, LivingEntity>[] finalGroup = new HashMap[]{group};
+        commandSender.sendMessage(finalGroup[0].toString());
         new BukkitRunnable() {
 
             @Override
             public void run() {
-
-                for (LivingEntity entry : finalGroup.keySet()) {
+                finalGroup[0] = GroupManager.getGroup(groupId);
+                for (UUID entry : finalGroup[0].keySet()) {
                     Vector moveDirection = new Vector(0, 0, 0);
 
                         moveDirection = switch (direction) {
@@ -66,8 +73,10 @@ public class groupCommand implements CommandExecutor {
                         };
 
 
+
                     leader.setVelocity(moveDirection);
-                    entry.setVelocity(moveDirection);
+
+                    finalGroup[0].get(entry).setVelocity(moveDirection);
                 }
 
 
@@ -76,6 +85,7 @@ public class groupCommand implements CommandExecutor {
 
         return true;
     }
+
     private int getTotalEntitiesInGroup(List<String>entityList, String groupName) {
 
         int sum=0;
@@ -104,20 +114,22 @@ public class groupCommand implements CommandExecutor {
         return direction;
     }
 
-    protected HashMap<LivingEntity, Integer> spawnGroup(Player player, List<String>entityList, String groupName, int direction) {
-        HashMap<LivingEntity, Integer> group = new HashMap<LivingEntity, Integer>();
+    protected HashMap<UUID, LivingEntity> spawnGroup(Player player, List<String>entityList, String groupName, int direction) {
+
+
         ConfigurationSection groupConfig = plugin.getConfig().getConfigurationSection("group." + groupName + ".members");
         World world = player.getWorld();
         int gridSize = (int) Math.ceil(Math.sqrt(getTotalEntitiesInGroup(entityList, groupName)));
 
-        int tag = 0;
+
         int xOffset = 0, zOffset = 0;
         for (String string : entityList) {
             for (int j = 0; j < groupConfig.getInt(string); j++) {
                 LivingEntity entity = Spawner.spawn(player, world, string, plugin, player.getLocation());
 
                 Location loc = entity.getLocation();
-                group.put(entity, tag);
+                group.put(entity.getUniqueId(), entity);
+                GroupManager.addEntitytoGroupMap(entity.getUniqueId(), groupId);
                 placeEntity( direction, loc, xOffset, zOffset);
                 if (direction ==1 || direction == 2) {
                     xOffset++;
@@ -134,7 +146,7 @@ public class groupCommand implements CommandExecutor {
                         zOffset--;
                     }
                 }
-                tag++;
+
                 entity.teleport(loc);
 
             }
