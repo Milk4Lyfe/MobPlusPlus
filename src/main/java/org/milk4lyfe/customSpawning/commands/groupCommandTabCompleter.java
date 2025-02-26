@@ -31,7 +31,10 @@ public class groupCommandTabCompleter implements TabCompleter {
             return mobplusplus.getListFromConfiguration(plugin, "group");
         }
         else if (strings.length == 2 && strings[0].equalsIgnoreCase("march")){
-            return mobplusplus.getListFromConfiguration(plugin, "group");
+            List<String> stringList = GroupManager.returnGroupMapAsList().stream()
+                    .map(UUID::toString)  // Convert each UUID to a String
+                    .collect(Collectors.toList());
+            return stringList;
         }
         else if (strings.length == 2 && strings[0].equalsIgnoreCase("delete")){
             List<String> stringList = GroupManager.returnGroupMapAsList().stream()

@@ -60,7 +60,20 @@ public class groupCommand implements CommandExecutor {
 
         }
         if (args[0].equalsIgnoreCase("march") && args.length == 2) {
-            final HashMap<UUID, LivingEntity>[] finalGroup = new HashMap[]{group};
+            try {
+                if (!GroupManager.isGroupValid(UUID.fromString(args[1]))) { // On the rare case that the argument is an actual UUID but not a valid group
+                    commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&6Mob++&8] &cError: Invalid Group!"));
+                    return true;
+                }
+            }
+            catch (IllegalArgumentException e) {
+
+                commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&6Mob++&8] &cError: Invalid UUID!"));
+                return true;
+
+            }
+            HashMap<UUID, LivingEntity>[] finalGroup = new HashMap[]{GroupManager.getGroup(UUID.fromString(args[1]))};
+
             commandSender.sendMessage(finalGroup[0].toString());
             if (GroupManager.getMarching(groupId) == null) {
                 GroupManager.setMarching(groupId, false);
@@ -83,9 +96,35 @@ public class groupCommand implements CommandExecutor {
             GroupManager.march(finalGroup, direction, leader, groupId);
         }
         if (args[0].equalsIgnoreCase("delete") && args.length == 2) {
+            try {
+                if (!GroupManager.isGroupValid(UUID.fromString(args[1]))) { // On the rare case that the argument is an actual UUID but not a valid group
+                    commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&6Mob++&8] &cError: Invalid Group!"));
+                    return true;
+                }
+            }
+            catch (IllegalArgumentException e) {
+
+                commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&6Mob++&8] &cError: Invalid UUID!"));
+                return true;
+
+            }
+
             GroupManager.deleteGroup(UUID.fromString(args[1]), leader);
+
         }
         if (args[0].equalsIgnoreCase("tphere") && args.length == 2) {
+            try {
+                if (!GroupManager.isGroupValid(UUID.fromString(args[1]))) { // On the rare case that the argument is an actual UUID but not a valid group
+                    commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&6Mob++&8] &cError: Invalid Group!"));
+                    return true;
+                }
+            }
+            catch (IllegalArgumentException e) {
+
+                commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&6Mob++&8] &cError: Invalid UUID!"));
+                return true;
+
+            }
             GroupManager.teleportGroup(groupId, (Player) commandSender);
         }
 

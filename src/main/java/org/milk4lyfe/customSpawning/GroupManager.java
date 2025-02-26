@@ -33,6 +33,9 @@ public class GroupManager {
     public static HashMap<UUID, LivingEntity> getGroupForEntityId(UUID uuid) {
         return entityGroups.get(uuid);
     }
+    public static boolean isGroupValid(UUID uuid) {
+        return entityGroups.containsKey(uuid);
+    }
     public static void updateGroup(UUID groupId, HashMap<UUID, LivingEntity> group) {
         entityGroups.remove(groupId);
         entityGroups.put(groupId, group);

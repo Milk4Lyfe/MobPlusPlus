@@ -1,10 +1,12 @@
 pls learn nms
-26/2 TODO:
+27/2 TODO:
 - [ ] More cleanup (put some methods in other classes)
 - [ ] Command that toggles AI
 - [ ] Make it so when marching if theres a slop it either
-up or down
-- [ ] Make more exceptions
+  up or down
+
+26/2 TODO:
+- [X] Make more exceptions
 
 25/2 TODO:
 - [X] Clean up some of the code
