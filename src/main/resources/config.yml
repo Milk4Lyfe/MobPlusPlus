@@ -1,8 +1,8 @@
 entities:
-  #PUT MOBS HERE---------------------------
-  example:
+  test:
     mob_type: HUSK
-    name: '&c&lExample Mob'
+    name: '&c&lThe Scary'
+    health: 10
     equipment:
       helmet: LEATHER_HELMET
       chestplate: DIAMOND_CHESTPLATE
@@ -10,13 +10,34 @@ entities:
       boots: IRON_BOOTS
       main_hand: IRON_SWORD
       off_hand: SHIELD
-    health: 10
-    movement_speed: 0.5
-    knockback_resistance: 5
-    damage: 10 # the damage the mob outputs
+
+  test1:
+    weapon: iron_sword
+    mob_type: SKELETON
+    name: The Scary 2!!!
+    health: 5
+    movement_speed: 0.9
+    equipment:
+      helmet: CHAINMAIL_HELMET
+      chestplate: LEATHER_CHESTPLATE
+      leggings: GOLDEN_LEGGINGS
+      boots: DIAMOND_BOOTS
+      main_hand: bow
+  testLeader:
+    weapon: diamond_Sword
+    mob_type: HUSK
+    name: '&aThe Scary Leader'
+    equipment:
+      helmet: GOLDEN_HELMET
+      chestplate: DIAMOND_CHESTPLATE
+      leggings: IRON_LEGGINGS
+      boots: LEATHER_BOOTS
+      main_hand: bow
+
+
 group:
   testGroup:
-    members: #put them in the order you want them to be especially in square formations
-      test: 20
+    members: #Put entites here. They wll probably be placed in order.
+      test: 40
       test1: 10
-    leader: test
+    leader: testLeader # NOTE LEADERS ARE REQUIRED (does not have to be a seperate entity)

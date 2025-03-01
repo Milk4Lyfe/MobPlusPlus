@@ -16,14 +16,11 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.milk4lyfe.customSpawning.mobplusplus;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class Spawner implements CommandExecutor {
 
-    public mobplusplus plugin;
+    public static mobplusplus plugin;
     public List<String> entityList;
     public Spawner(mobplusplus plugin) {
         this.plugin = plugin;
@@ -43,7 +40,7 @@ public class Spawner implements CommandExecutor {
 
 
                 } catch (NumberFormatException e) {
-                    commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&6Mob++&8] &cError: Invalid quantity! Submit an integer!"));
+                    commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getMessagesConfig().getString("INVALID_INTEGER")));
                     return true;
                 }
 
@@ -63,17 +60,17 @@ public class Spawner implements CommandExecutor {
                     spawn(player, world, args[0], plugin, player.getLocation());
 
                 }
-                commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&6Mob++&8] &r&aSpawned entities!"));
+                commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getMessagesConfig().getString("MSG_SPAWN")));
             }
             else {
                 spawn(player, world, args[0], plugin, player.getLocation());
-                commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&6Mob++&8] &r&aSpawned an entity!"));
+                commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getMessagesConfig().getString("MSG_SPAWNS")));
             }
 
 
         }
         else {
-            commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&6Mob++&8] &cError: Invalid Custom Mob!"));
+            commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getMessagesConfig().getString("INVALID_ENTITY")));
         }
 
 
@@ -86,7 +83,7 @@ public class Spawner implements CommandExecutor {
             type = EntityType.valueOf(mobplusplus.getConfigStringValue(plugin, "entities." + args0 + ".mob_type").toUpperCase());
         }
         catch (IllegalArgumentException e) {
-            commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&6Mob++&8] &cError: Mob_type is invalid!"));
+            commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getMessagesConfig().getString("INVALID_MOBTYPE")));
             return null;
         }
 
@@ -177,7 +174,7 @@ public class Spawner implements CommandExecutor {
 
         }
         catch(IllegalArgumentException e) {
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&6Mob++&8] &cError: Value of attribute is invalid."));
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getMessagesConfig().getString("INVALID_ATTRIBUTE")));
         }
     }
 }

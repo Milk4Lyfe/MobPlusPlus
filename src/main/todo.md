@@ -1,7 +1,6 @@
 pls learn nms
 27/2 TODO:
-- [ ] More cleanup (put some methods in other classes)
-- [ ] Command that toggles AI
+- [X] Command that toggles AI
 - [ ] Make it so when marching if theres a slop it either
   up or down
 

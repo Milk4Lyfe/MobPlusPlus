@@ -20,6 +20,7 @@ public class GroupManager {
 
     static Map<UUID, UUID> entityGroupMap = new HashMap<>();
     static Map<UUID, Boolean> marchingGroupMap = new HashMap<>();
+    static Map<UUID, Boolean> aiMap = new HashMap<>();
     static Map<UUID, LivingEntity> leaderMap = new HashMap<>();
     public static void assignGroup(UUID groupId,  HashMap<UUID, LivingEntity> group) {
         entityGroups.put(groupId, group);
@@ -40,28 +41,50 @@ public class GroupManager {
         entityGroups.remove(groupId);
         entityGroups.put(groupId, group);
     }
+    public static void setAI(UUID groupId, Boolean bool) {
+
+        aiMap.put(groupId, bool);
+
+        Iterator<LivingEntity> iterator = entityGroups.get(groupId).values().iterator();
+        while (iterator.hasNext()) {
+            LivingEntity entity = iterator.next();
+
+            entity.setAI(bool);
+
+        }
+    }
+    public static Boolean getAI(UUID groupId) {
+        return aiMap.get(groupId);
+    }
     public static HashMap<UUID, LivingEntity> getGroup(UUID groupId) {
         return entityGroups.get(groupId);
     }
+
     public static void addEntitytoGroupMap(UUID uuid, UUID groupId) {
         entityGroupMap.put(uuid, groupId);
     }
+
     public static Map<UUID, UUID> returnEntitytoGroupMap() {
         return entityGroupMap;
     }
+
     public static ArrayList<UUID> returnGroupMapAsList() {
         return new ArrayList<>(entityGroups.keySet());
     }
+
     public static void setMarching(UUID groupID, Boolean yes) {
         marchingGroupMap.put(groupID, yes);
     }
+
     public static Boolean getMarching(UUID groupID) {
         return marchingGroupMap.get(groupID);
     }
+
     public static void teleportGroup(UUID groupId, Player player) {
         squareFormation(player, groupId, getPlayerDirection(player));
         leaderMap.get(groupId).teleport(player.getLocation());
     }
+
     public static void deleteGroup(UUID groupId, LivingEntity leader) {
         Iterator<LivingEntity> iterator = entityGroups.get(groupId).values().iterator();
         while (iterator.hasNext()) {

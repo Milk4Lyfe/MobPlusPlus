@@ -1,0 +1,9 @@
+#You can edit the strings to whatever you want, but please don't delete any keys
+ER_INVALID_ENTITY: "&8[&6Mob++&8] &cError: Invalid Prefab!"
+ER_INVALID_MOBTYPE: "&8[&6Mob++&8] &cError: Mob type is invalid!"
+ER_INVALID_ATTRIBUTE: "&8[&6Mob++&8] &cError: Value of attribute is invalid!"
+ER_INVALID_INTEGER: "&8[&6Mob++&8] &cError: Invalid quantity! Submit an integer!"
+ER_INVALID_GROUP: "&8[&6Mob++&8] &cError: Invalid Group!"
+ER_INVALID_UUID: "&8[&6Mob++&8] &cError: Invalid UUID!"
+MSG_SPAWN: "&8[&6Mob++&8] &r&aSpawned an entity!"
+MSG_SPAWNS: "&8[&6Mob++&8] &r&aSpawned entities!"
