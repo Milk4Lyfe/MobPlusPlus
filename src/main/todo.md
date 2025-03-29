@@ -3,7 +3,9 @@ pls learn nms
 - [X] Command that toggles AI
 - [ ] Make it so when marching if theres a slop it either
   up or down
-
+- [ ] Make it so you can do things for ALL groups
+- [ ] Set Target of group
+- [X] Chop up GroupManager into pieces because it is stinky autocrat
 26/2 TODO:
 - [X] Make more exceptions
 

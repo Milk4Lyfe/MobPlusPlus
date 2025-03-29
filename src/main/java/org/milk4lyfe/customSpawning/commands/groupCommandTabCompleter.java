@@ -3,9 +3,7 @@ package org.milk4lyfe.customSpawning.commands;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.milk4lyfe.customSpawning.GroupManager;
+import org.milk4lyfe.customSpawning.group.GroupRegistry;
 import org.milk4lyfe.customSpawning.mobplusplus;
 
 import java.util.*;
@@ -31,24 +29,24 @@ public class groupCommandTabCompleter implements TabCompleter {
             return mobplusplus.getListFromConfiguration(plugin, "group");
         }
         else if (strings.length == 2 && strings[0].equalsIgnoreCase("march")){
-            List<String> stringList = GroupManager.returnGroupMapAsList().stream()
+            List<String> stringList = GroupRegistry.returnGroupMapAsList().stream()
                     .map(UUID::toString)  // Convert each UUID to a String
                     .collect(Collectors.toList());
             return stringList;
         }
         else if (strings.length == 2 && strings[0].equalsIgnoreCase("delete")){
-            List<String> stringList = GroupManager.returnGroupMapAsList().stream()
+            List<String> stringList = GroupRegistry.returnGroupMapAsList().stream()
                     .map(UUID::toString)  // Convert each UUID to a String
                     .collect(Collectors.toList());
             return stringList;
         }
         else if (strings.length == 2 && strings[0].equalsIgnoreCase("tphere")){
-            List<String> stringList = GroupManager.returnGroupMapAsList().stream()
+            List<String> stringList = GroupRegistry.returnGroupMapAsList().stream()
                     .map(UUID::toString)  // Convert each UUID to a String
                     .collect(Collectors.toList());
             return stringList;
         }else if (strings.length == 2 && strings[0].equalsIgnoreCase("toggleAI")){
-            List<String> stringList = GroupManager.returnGroupMapAsList().stream()
+            List<String> stringList = GroupRegistry.returnGroupMapAsList().stream()
                     .map(UUID::toString)  // Convert each UUID to a String
                     .collect(Collectors.toList());
             return stringList;

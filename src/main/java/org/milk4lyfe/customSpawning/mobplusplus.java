@@ -6,6 +6,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.milk4lyfe.customSpawning.commands.*;
+import org.milk4lyfe.customSpawning.group.GroupSpawner;
 import org.milk4lyfe.customSpawning.listeners.entityDeathEvent;
 
 import java.io.File;
@@ -29,7 +30,8 @@ public final class mobplusplus extends JavaPlugin {
         getCommand("group").setExecutor(new groupCommand(this));
         getCommand("group").setTabCompleter(new groupCommandTabCompleter(this));
         getServer().getPluginManager().registerEvents(new entityDeathEvent(this), this);
-        GroupManager thing = new GroupManager(this);
+
+        GroupSpawner GroupSpawner = new GroupSpawner(this);
     }
 
     @Override
