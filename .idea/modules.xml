@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/customspawning.iml" filepath="$PROJECT_DIR$/customspawning.iml" />
+      <module fileurl="file://$PROJECT_DIR$/MobPlusPlus.iml" filepath="$PROJECT_DIR$/MobPlusPlus.iml" />
     </modules>
   </component>
 </project>

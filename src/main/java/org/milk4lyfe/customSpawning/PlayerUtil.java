@@ -1,8 +1,15 @@
 package org.milk4lyfe.customSpawning;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+
+
 public class PlayerUtil {
+    public static mobplusplus plugin;
+    public PlayerUtil(mobplusplus plugin) {
+        PlayerUtil.plugin = plugin;
+    }
     public static int getPlayerDirection(Player player) {
         float yaw = player.getLocation().getYaw();
         int direction = 0;
@@ -20,5 +27,8 @@ public class PlayerUtil {
             // Facing East
         }
         return direction;
+    }
+    public static void sendPlayerMessage(Player player, String message) {
+        player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getMessagesConfig().getString(message)));
     }
 }

@@ -14,21 +14,21 @@ import org.milk4lyfe.customSpawning.group.GroupRegistry;
 import org.milk4lyfe.customSpawning.group.GroupSpawner;
 import org.milk4lyfe.customSpawning.mobplusplus;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+
+import static org.milk4lyfe.customSpawning.group.GroupRegistry.returnEntityGroups;
 
 
 public class groupCommand implements CommandExecutor {
     public mobplusplus plugin;
-    public UUID groupId = UUID.randomUUID();
-    public boolean marching = false;
+
+
     int direction = 0;
-    public LivingEntity leader;
+
     HashMap<UUID, LivingEntity> group = new HashMap<UUID, LivingEntity>();
     public groupCommand(mobplusplus plugin) {
         this.plugin = plugin;
-        this.groupId = UUID.randomUUID();
+
 
     }
     @Override
@@ -39,118 +39,137 @@ public class groupCommand implements CommandExecutor {
             return true;
         }
         if (args[0].equalsIgnoreCase("spawn") && args.length==2) {
-            Player player = (Player) commandSender;
-            World world = player.getWorld();
-
-            try {
-                ConfigurationSection bettergroupConfig = plugin.getConfig().getConfigurationSection("group." + args[1]);
-                List<String> entityList = mobplusplus.getListFromConfiguration(plugin, "group." + args[1] + ".members");
-
-                direction = PlayerUtil.getPlayerDirection(player);
-                leader = Spawner.spawn(player, world, bettergroupConfig.getString("leader"), plugin, player.getLocation());
-                leader.setAI(false);
-                GroupRegistry.setLeader(groupId, leader);
-                group = GroupSpawner.spawnGroup(player, entityList, args[1], direction, groupId);
-                commandSender.sendMessage(String.valueOf(direction));
-                GroupRegistry.assignGroup(groupId, group);
-            }catch(NullPointerException e) {
-                commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getMessagesConfig().getString("ER_INVALID_GROUP")));
-            }
-
-
-
+            spawnCommand(commandSender, args);
         }
         if (args[0].equalsIgnoreCase("march") && args.length == 2) {
-            try {
-                if (!GroupRegistry.isGroupValid(UUID.fromString(args[1]))) { // On the rare case that the argument is an actual UUID but not a valid group
-                    commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getMessagesConfig().getString("ER_INVALID_GROUP")));
-                    return true;
-                }
-            }
-            catch (IllegalArgumentException e) {
-
-                commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getMessagesConfig().getString("ER_INVALID_UUID")));
-                return true;
-
-            }
-            HashMap<UUID, LivingEntity>[] finalGroup = new HashMap[]{GroupRegistry.getGroup(UUID.fromString(args[1]))};
-
-            commandSender.sendMessage(finalGroup[0].toString());
-            if (GroupRegistry.getMarching(UUID.fromString(args[1])) == null) {
-                GroupRegistry.setMarching(UUID.fromString(args[1]), false);
-            }
-            GroupRegistry.setMarching(UUID.fromString(args[1]), !GroupRegistry.getMarching(UUID.fromString(args[1])));
-            if (GroupRegistry.getMarching(UUID.fromString(args[1]))) {
-                for(LivingEntity e : finalGroup[0].values()) {
-                    e.setAI(true);
-
-                }
-                leader.setAI(true);
-            }
-            else {
-                for(LivingEntity e : finalGroup[0].values()) {
-                    e.setAI(false);
-
-                }
-                leader.setAI(false);
-            }
-            GroupFormation.march(finalGroup, direction, leader, groupId);
+            marchCommand(commandSender, args);
         }
         if (args[0].equalsIgnoreCase("delete") && args.length == 2) {
-            try {
-                if (!GroupRegistry.isGroupValid(UUID.fromString(args[1]))) { // On the rare case that the argument is an actual UUID but not a valid group
-                    commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getMessagesConfig().getString("ER_INVALID_GROUP")));
-                    return true;
-                }
-            }
-            catch (IllegalArgumentException e) {
-
-                commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getMessagesConfig().getString("ER_INVALID_UUID")));
-                return true;
-
-            }
-
-            GroupRegistry.deleteGroup(UUID.fromString(args[1]), leader);
+         deleteCommand(commandSender, args);
 
         }
         if (args[0].equalsIgnoreCase("tphere") && args.length == 2) {
-            try {
-                if (!GroupRegistry.isGroupValid(UUID.fromString(args[1]))) { // On the rare case that the argument is an actual UUID but not a valid group
-                    commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getMessagesConfig().getString("ER_INVALID_GROUP")));
-                    return true;
-                }
-            }
-            catch (IllegalArgumentException e) {
-
-                commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getMessagesConfig().getString("ER_INVALID_UUID")));
-                return true;
-
-            }
-            GroupFormation.teleportGroup(UUID.fromString(args[1]), (Player) commandSender);
+            tphereCommand(commandSender, args);
         }
         if (args[0].equalsIgnoreCase("toggleAI") && args.length == 2) {
-            try {
-                if (!GroupRegistry.isGroupValid(UUID.fromString(args[1]))) { // On the rare case that the argument is an actual UUID but not a valid group
-                    commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getMessagesConfig().getString("ER_INVALID_GROUP")));
-                    return true;
-                }
-            }
-            catch (IllegalArgumentException e) {
-
-                commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getMessagesConfig().getString("ER_INVALID_UUID")));
-                return true;
-
-            }
-            if (GroupRegistry.getAI(UUID.fromString(args[1])) == null) {
-                GroupRegistry.setAI(UUID.fromString(args[1]), false);
-            }
-            GroupRegistry.setAI(UUID.fromString(args[1]), !GroupRegistry.getAI(UUID.fromString(args[1])));
+            toggleAiCommand(commandSender, args);
 
         }
 
 
         return true;
     }
+    private void spawnCommand(CommandSender commandSender, String[] args) {
+        Player player = (Player) commandSender;
+        World world = player.getWorld();
+
+        try {
+            ConfigurationSection bettergroupConfig = plugin.getConfig().getConfigurationSection("group." + args[1]);
+            List<String> entityList = mobplusplus.getListFromConfiguration(plugin, "group." + args[1] + ".members");
+            UUID groupId  = UUID.randomUUID();
+            direction = PlayerUtil.getPlayerDirection(player);
+            GroupRegistry.setDirection(groupId, direction);
+            LivingEntity leader = Spawner.spawn(player, world, bettergroupConfig.getString("leader"), plugin, player.getLocation());
+            leader.setAI(false);
+            GroupRegistry.setLeader(groupId, leader);
+            group = GroupSpawner.spawnGroup(player, entityList, args[1], direction, groupId);
+            commandSender.sendMessage(String.valueOf(direction));
+            GroupRegistry.assignGroup(groupId, group);
+        }catch(NullPointerException e) {
+            PlayerUtil.sendPlayerMessage((Player) commandSender, "ER_INVALID_GROUP");
+        }
+
+
+    }
+    private void marchCommand(CommandSender commandSender, String[] args) {
+        if (Objects.equals(args[1], "all")) {
+            List<UUID> toDelete = new ArrayList<>();
+            toDelete.addAll(returnEntityGroups().keySet());
+            for (UUID g : toDelete) {
+                GroupRegistry.toggleMarch(g);
+            }
+
+        }
+        else {
+            try {
+                if (!GroupRegistry.isGroupValid(UUID.fromString(args[1]))) { // On the rare case that the argument is an actual UUID but not a valid group
+                    PlayerUtil.sendPlayerMessage((Player) commandSender, "ER_INVALID_GROUP");
+                    return;
+                }
+            }
+            catch (IllegalArgumentException e) {
+
+                PlayerUtil.sendPlayerMessage((Player) commandSender, "ER_INVALID_UUID");
+                return;
+
+            }
+            GroupRegistry.toggleMarch(UUID.fromString(args[1]));
+        }
+
+    }
+    private void deleteCommand(CommandSender commandSender, String[] args) {
+        if (Objects.equals(args[1], "all")) {
+            List<UUID> toDelete = new ArrayList<>();
+            toDelete.addAll(returnEntityGroups().keySet());
+            for (UUID g : toDelete) {
+                GroupRegistry.deleteGroup(g, GroupRegistry.getLeader(g));
+            }
+
+        }
+        else {
+            try {
+                if (!GroupRegistry.isGroupValid(UUID.fromString(args[1]))) { // On the rare case that the argument is an actual UUID but not a valid group
+                    commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getMessagesConfig().getString("ER_INVALID_GROUP")));
+                    return;
+                }
+            }
+            catch (IllegalArgumentException e) {
+
+                commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getMessagesConfig().getString("ER_INVALID_UUID")));
+                return;
+
+            }
+            GroupRegistry.deleteGroup(UUID.fromString(args[1]), GroupRegistry.getLeader(UUID.fromString(args[1])));
+
+        }
+
+    }
+    private void tphereCommand(CommandSender commandSender, String[] args) {
+        try {
+            if (!GroupRegistry.isGroupValid(UUID.fromString(args[1]))) { // On the rare case that the argument is an actual UUID but not a valid group
+                PlayerUtil.sendPlayerMessage((Player) commandSender, "ER_INVALID_GROUP");
+                return;
+            }
+        }
+        catch (IllegalArgumentException e) {
+
+            commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getMessagesConfig().getString("ER_INVALID_UUID")));
+            return;
+
+        }
+        GroupFormation.teleportGroup(UUID.fromString(args[1]), (Player) commandSender);
+
+    }
+    private void toggleAiCommand(CommandSender commandSender, String[] args) {
+        try {
+            if (!GroupRegistry.isGroupValid(UUID.fromString(args[1]))) { // On the rare case that the argument is an actual UUID but not a valid group
+                commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getMessagesConfig().getString("ER_INVALID_GROUP")));
+                return;
+            }
+        }
+        catch (IllegalArgumentException e) {
+
+            commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getMessagesConfig().getString("ER_INVALID_UUID")));
+            return;
+
+        }
+        if (GroupRegistry.getAI(UUID.fromString(args[1])) == null) {
+            GroupRegistry.setAI(UUID.fromString(args[1]), false);
+        }
+        GroupRegistry.setAI(UUID.fromString(args[1]), !GroupRegistry.getAI(UUID.fromString(args[1])));
+
+    }
+
 
     private boolean isGroup(String[] args) {
         return args.length > 0;

@@ -59,8 +59,23 @@ public class GroupFormation {
 
 
     }
-    public static void checkForSolidBlockInFront(LivingEntity entity) {
-        //TODO
+
+    public static void entityJump(LivingEntity entity, Vector moveDirection) {
+        Location loc = entity.getLocation().add(moveDirection);
+        entity.teleport(loc.add(0, 1, 0));
+    }
+    public static void entityDrop(LivingEntity entity) {
+        entity.teleport(entity.getLocation().add(0, -1, 0));
+    }
+    public static boolean checkForSolidBlockInFront(LivingEntity entity, Vector moveDirection) {
+        Location loc = entity.getLocation();
+        Vector dir = loc.getDirection();
+        return loc.add(dir.multiply(1)).getBlock().isSolid();
+    }
+    public static boolean checkIfFloating(LivingEntity entity) {
+        Location loc = entity.getLocation();
+        loc.add(0, -1, 0);
+        return loc.getBlock().isSolid();
     }
     public static void teleportGroup(UUID groupId, Player player) {
         squareFormation(player, groupId, PlayerUtil.getPlayerDirection(player));
@@ -72,34 +87,46 @@ public class GroupFormation {
             @Override
             public void run() {
                 finalGroup[0] = GroupRegistry.getGroup(groupId);
-                if (!GroupRegistry.getMarching(groupId)) {
-                    cancel();
+                if (!GroupRegistry.getMarching(groupId) || GroupRegistry.getMarching(groupId) == null) {
+                    return;
                 }
+
                 if (finalGroup[0].isEmpty()) {
                     GroupRegistry.deleteGroup(groupId, leader);
-                    cancel();
+                    return;
                 }
+                org.bukkit.util.Vector moveDirection = new org.bukkit.util.Vector(0, 0, 0);
+                moveDirection = switch (direction) {
+                    case 0 -> //South
+                            new org.bukkit.util.Vector(0, 0, 0.1);
+                    case 1 ->//West
+                            new org.bukkit.util.Vector(-0.1, 0, 0);
+                    case 2 ->//North
+                            new org.bukkit.util.Vector(0, 0, -0.1);
+                    case 3 -> //East
+                            new Vector(0.1, 0, 0);
+                    default -> moveDirection;
+                };
                 for (UUID entry : finalGroup[0].keySet()) {
-                    org.bukkit.util.Vector moveDirection = new org.bukkit.util.Vector(0, 0, 0);
 
-                    moveDirection = switch (direction) {
-                        case 0 -> //South
-                                new org.bukkit.util.Vector(0, 0, 0.1);
-                        case 1 ->//West
-                                new org.bukkit.util.Vector(-0.1, 0, 0);
-                        case 2 ->//North
-                                new org.bukkit.util.Vector(0, 0, -0.1);
-                        case 3 -> //East
-                                new Vector(0.1, 0, 0);
-                        default -> moveDirection;
-                    };
-
-
-
-                    leader.setVelocity(moveDirection);
+                    if (checkForSolidBlockInFront(finalGroup[0].get(entry), moveDirection)) {
+                        entityJump(finalGroup[0].get(entry), moveDirection);
+                    }
+                    if (!checkIfFloating(finalGroup[0].get(entry)) && !checkForSolidBlockInFront(leader, moveDirection)) {
+                        entityDrop(finalGroup[0].get(entry));
+                    }
 
                     finalGroup[0].get(entry).setVelocity(moveDirection);
+                    leader.setVelocity(moveDirection);
                 }
+
+                if (checkForSolidBlockInFront(leader, moveDirection)) {
+                    entityJump(leader, moveDirection);
+                }
+                if (!checkIfFloating(leader) && !checkForSolidBlockInFront(leader, moveDirection)) {
+                    entityDrop(leader);
+                }
+
 
 
             }
