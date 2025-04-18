@@ -70,11 +70,18 @@ public class groupCommand implements CommandExecutor {
             direction = PlayerUtil.getPlayerDirection(player);
             GroupRegistry.setDirection(groupId, direction);
             LivingEntity leader = Spawner.spawn(player, world, bettergroupConfig.getString("leader"), plugin, player.getLocation());
+            if (bettergroupConfig.getBoolean("ai") || !bettergroupConfig.contains("ai")) {
+                leader.setAI(true);
+            }
+            else {
+                leader.setAI(false);
+            }
             leader.setAI(false);
             GroupRegistry.setLeader(groupId, leader);
             group = GroupSpawner.spawnGroup(player, entityList, args[1], direction, groupId);
             commandSender.sendMessage(String.valueOf(direction));
             GroupRegistry.assignGroup(groupId, group);
+            PlayerUtil.sendPlayerMessage(player, "MSG_GROUP_SPAWN");
         }catch(NullPointerException e) {
             PlayerUtil.sendPlayerMessage((Player) commandSender, "ER_INVALID_GROUP");
         }
@@ -104,6 +111,7 @@ public class groupCommand implements CommandExecutor {
 
             }
             GroupRegistry.toggleMarch(UUID.fromString(args[1]));
+            PlayerUtil.sendPlayerMessage((Player) commandSender, "MSG_GROUP_MARCH");
         }
 
     }
@@ -130,7 +138,7 @@ public class groupCommand implements CommandExecutor {
 
             }
             GroupRegistry.deleteGroup(UUID.fromString(args[1]), GroupRegistry.getLeader(UUID.fromString(args[1])));
-
+            PlayerUtil.sendPlayerMessage((Player) commandSender, "MSG_GROUP_DELETE");
         }
 
     }
@@ -148,6 +156,7 @@ public class groupCommand implements CommandExecutor {
 
         }
         GroupFormation.teleportGroup(UUID.fromString(args[1]), (Player) commandSender);
+        PlayerUtil.sendPlayerMessage((Player) commandSender, "MSG_GROUP_TPHERE");
 
     }
     private void toggleAiCommand(CommandSender commandSender, String[] args) {
@@ -167,7 +176,7 @@ public class groupCommand implements CommandExecutor {
             GroupRegistry.setAI(UUID.fromString(args[1]), false);
         }
         GroupRegistry.setAI(UUID.fromString(args[1]), !GroupRegistry.getAI(UUID.fromString(args[1])));
-
+        PlayerUtil.sendPlayerMessage((Player) commandSender, "MSG_GROUP_AI");
     }
 
 

@@ -16,7 +16,7 @@ entities:
     mob_type: SKELETON
     name: The Scary 2!!!
     health: 5
-    movement_speed: 0.9
+    movement_speed: 0.3
     equipment:
       helmet: CHAINMAIL_HELMET
       chestplate: LEATHER_CHESTPLATE
@@ -37,7 +37,9 @@ entities:
 
 group:
   testGroup:
-    members: #Put entites here. They wll probably be placed in order.
+    members: # Put entites here. They wll probably be placed in order.
       test: 40
       test1: 10
-    leader: testLeader # NOTE LEADERS ARE REQUIRED (does not have to be a seperate entity)
+    leader: testLeader # NOTE LEADERS ARE REQUIRED
+    ai: true #use this to control whether the group starts with ai or not
+

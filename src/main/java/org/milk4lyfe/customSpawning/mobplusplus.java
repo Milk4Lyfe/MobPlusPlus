@@ -30,7 +30,7 @@ public final class mobplusplus extends JavaPlugin {
         getCommand("group").setExecutor(new groupCommand(this));
         getCommand("group").setTabCompleter(new groupCommandTabCompleter(this));
         getServer().getPluginManager().registerEvents(new entityDeathEvent(this), this);
-
+        PlayerUtil playerUtil = new PlayerUtil(this);
         GroupSpawner GroupSpawner = new GroupSpawner(this);
     }
 
