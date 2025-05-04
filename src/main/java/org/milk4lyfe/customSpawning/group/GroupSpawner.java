@@ -50,12 +50,8 @@ public class GroupSpawner {
                         zOffset--;
                     }
                 }
-                if (groupConfig.getBoolean("ai") || !groupConfig.contains("ai")) {
-                    entity.setAI(true);
-                }
-                else {
-                    entity.setAI(false);
-                }
+
+
 
                 entity.teleport(newLoc);
 
@@ -63,6 +59,8 @@ public class GroupSpawner {
 
             }
         }
+
+
         return group;
     }
 }

@@ -9,6 +9,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Ageable;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -92,7 +93,9 @@ public class Spawner implements CommandExecutor {
         ConfigurationSection entityConfig = plugin.getConfig().getConfigurationSection("entities." + args0);
         entity.setCustomName(ChatColor.translateAlternateColorCodes('&', mobplusplus.getConfigStringValue(plugin, "entities." + args0 + ".name")));
         ConfigurationSection equipmentConfig = plugin.getConfig().getConfigurationSection("entities." + args0 + ".equipment");
-
+        if (entity instanceof Ageable) {
+            ((Ageable) entity).setAdult();
+        }
         equipEntity(entity, equipmentConfig, commandSender);
         if (entityConfig.contains("health")) {
             setDoubleAttribute(entity, entityConfig.getDouble("health"), commandSender, entityConfig, Attribute.MAX_HEALTH);

@@ -23,9 +23,9 @@ public class groupCommand implements CommandExecutor {
     public mobplusplus plugin;
 
 
-    int direction = 0;
+    //int direction = 0;
 
-    HashMap<UUID, LivingEntity> group = new HashMap<UUID, LivingEntity>();
+    //HashMap<UUID, LivingEntity> group = new HashMap<UUID, LivingEntity>();
     public groupCommand(mobplusplus plugin) {
         this.plugin = plugin;
 
@@ -67,20 +67,24 @@ public class groupCommand implements CommandExecutor {
             ConfigurationSection bettergroupConfig = plugin.getConfig().getConfigurationSection("group." + args[1]);
             List<String> entityList = mobplusplus.getListFromConfiguration(plugin, "group." + args[1] + ".members");
             UUID groupId  = UUID.randomUUID();
-            direction = PlayerUtil.getPlayerDirection(player);
+
+            int direction = PlayerUtil.getPlayerDirection(player);
             GroupRegistry.setDirection(groupId, direction);
+
             LivingEntity leader = Spawner.spawn(player, world, bettergroupConfig.getString("leader"), plugin, player.getLocation());
+            HashMap<UUID, LivingEntity> group = GroupSpawner.spawnGroup(player, entityList, args[1], direction, groupId);
+            GroupRegistry.assignGroup(groupId, group);
             if (bettergroupConfig.getBoolean("ai") || !bettergroupConfig.contains("ai")) {
                 leader.setAI(true);
             }
             else {
                 leader.setAI(false);
             }
-            leader.setAI(false);
+            GroupRegistry.setAI(groupId, bettergroupConfig.getBoolean("ai") || !bettergroupConfig.contains("ai"));
             GroupRegistry.setLeader(groupId, leader);
-            group = GroupSpawner.spawnGroup(player, entityList, args[1], direction, groupId);
+
             commandSender.sendMessage(String.valueOf(direction));
-            GroupRegistry.assignGroup(groupId, group);
+
             PlayerUtil.sendPlayerMessage(player, "MSG_GROUP_SPAWN");
         }catch(NullPointerException e) {
             PlayerUtil.sendPlayerMessage((Player) commandSender, "ER_INVALID_GROUP");
